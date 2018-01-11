@@ -45,7 +45,7 @@ if [ $ACTION == "apply" ];
  then ACTION=$ACTION" -auto-approve";
 fi
 
-# Get the bucket to hold state files for this region
+# Get the bucket to hold the state files for this region
 CONFIG_BASE=$SOURCE_DIR/region/$region
 CONFIG_FILE=$CONFIG_BASE/geo_config.sh
 if [ ! -f $CONFIG_FILE ]; then
