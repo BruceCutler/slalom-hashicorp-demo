@@ -79,7 +79,7 @@ Once you have performed the above configuration steps, you can build infrastruct
    $ tools/aws/terraform/tf_deploy -r us-east-1 -t dev -s network apply
    ```
 
-7. Finally, to destroy resources that you have created as part of the dev network stack, you should run:
+7. Finally, to **destroy** resources that you have created as part of the dev network stack, you should run:
 
     ```sh
    $ tools/aws/terraform/tf_deploy -r us-east-1 -t dev -s network destroy -force
