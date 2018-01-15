@@ -10,6 +10,10 @@ variable "iam_instance_profile" {}
 
 variable "security_groups" {}
 
+variable "userdata" {
+  default = ""
+}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
 
@@ -29,17 +33,13 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-data "template_file" "simple_userdata" {
-  template = "${file("${path.module}/templates/init.tpl")}"
-}
-
-resource "aws_launch_configuration" "web_server_lc" {
+resource "aws_launch_configuration" "launch_config" {
   image_id             = "${data.aws_ami.amazon_linux.id}"
   instance_type        = "${var.instance_type}"
   iam_instance_profile = "${var.iam_instance_profile}"
   security_groups      = ["${var.security_groups}"]
   key_name             = "bcutler-inno-${var.region}"
-  user_data            = "${data.template_file.simple_userdata.rendered}"
+  user_data            = "${var.userdata}"
 
   lifecycle {
     create_before_destroy = true
@@ -48,5 +48,5 @@ resource "aws_launch_configuration" "web_server_lc" {
 }
 
 output "launch_config" {
-  value = "${aws_launch_configuration.web_server_lc.id}"
+  value = "${aws_launch_configuration.launch_config.id}"
 }

@@ -4,6 +4,18 @@ variable "target" {}
 
 variable "stack" {}
 
+variable "geo" {}
+
+variable "bastion_instance_type" {}
+
+variable "bastion_asg_min" {}
+
+variable "bastion_asg_max" {}
+
+variable "bastion_asg_desired" {}
+
+variable "s3_bucket" {}
+
 variable "cidr_block" {}
 
 variable "azs" {
@@ -20,6 +32,15 @@ variable "priv_sub_cidr" {
 
 provider "aws" {
   region = "${var.region}"
+}
+
+data "terraform_remote_state" "iam" {
+  backend = "s3"
+  config {
+    bucket = "${var.s3_bucket}"
+    key    = "state/${var.target}-iam.tfstate"
+    region = "${var.region}"
+  }
 }
 
 module "vpc" {
@@ -50,6 +71,29 @@ module "private_subnet" {
   vpc_id          = "${module.vpc.vpc_id}"
   igw_id          = "${module.public_subnet.igw_id}"
   pub_subnet_ids  = "${module.public_subnet.pub_subnet_ids}"
+}
+
+module "security_groups" {
+  source = "./security_groups"
+  region = "${var.region}"
+  geo    = "${var.geo}"
+  target = "${var.target}"
+  stack  = "${var.stack}"
+  vpc_id = "${module.vpc.vpc_id}"
+}
+
+module "bastion" {
+  source = "./bastion"
+  region = "${var.region}"
+  geo    = "${var.geo}"
+  target = "${var.target}"
+  bastion_instance_type = "${var.bastion_instance_type}"
+  bastion_asg_min = "${var.bastion_asg_min}"
+  bastion_asg_max = "${var.bastion_asg_max}"
+  bastion_asg_desired = "${var.bastion_asg_desired}"
+  iam_instance_profile = "${data.terraform_remote_state.iam.bastion_server_iam_instance_profile}"
+  subnets = "${module.public_subnet.pub_subnet_ids}"
+  security_groups = "${module.security_groups.bastion_sg}"
 }
 
 output "vpc_id" {

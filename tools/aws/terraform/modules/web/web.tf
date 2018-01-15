@@ -38,6 +38,10 @@ data "terraform_remote_state" "iam" {
   }
 }
 
+data "template_file" "simple_userdata" {
+  template = "${file("${path.module}/templates/init.tpl")}"
+}
+
 module "security_groups" {
   source = "./security_groups"
   region = "${var.region}"
@@ -64,18 +68,18 @@ module "web_launch_config" {
   instance_type        = "${var.web_instance_type}"
   iam_instance_profile = "${data.terraform_remote_state.iam.web_server_iam_instance_profile}"
   security_groups      = "${module.security_groups.web_sg}"
+  userdata             = "${data.template_file.simple_userdata.rendered}"
 }
 
 module "web_asg" {
   source               = "../asg"
   target               = "${var.target}"
   geo                  = "${var.geo}"
-  azs                  = "${var.azs}"
   launch_config        = "${module.web_launch_config.launch_config}"
+  identifier           = "web"
   asg_min              = "${var.web_asg_min}"
   asg_max              = "${var.web_asg_max}"
   asg_desired          = "${var.web_asg_desired}"
-  subnets              = "${data.terraform_remote_state.network.pub_subnet_ids}"
+  subnets              = "${data.terraform_remote_state.network.priv_subnet_ids}"
   target_group         = ["${module.web_alb.target_group}"]
 }
-

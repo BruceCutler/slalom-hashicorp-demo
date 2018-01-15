@@ -1,6 +1,6 @@
 # Slalom Hashicorp Meetup Demo
 
-This repository houses terraform code used to build the infrastructure which was created in the Slalom/Hashicorp meetup demo. The Terraform documentation is pretty easy to follow: https://www.terraform.io/docs/index.html
+This repository houses terraform code used to build the infrastructure which was created in the Slalom/Hashicorp meetup demo. Before getting started, I'd recommend a quick browse of the Terraform documentation: https://www.terraform.io/docs/index.html
 
 We use the concept of stacks and modules to help us build our infrastructure in a layered approach. Stacks can be thought of as logical building blocks. A single stack can be made up of a number of modules. Modules are a standard Terraform feature, outlined here: https://www.terraform.io/docs/modules/index.html
 
@@ -20,7 +20,7 @@ Simply download the correct file for your operating system and unzip it. This wi
 
 */Users/bruce.cutler/Terraform0.11.1/terraform*
 
-Make sure that the location of terraform in your filesystem is contained added to your PATH (we recommend adding an entry to your .bashrc or .bash_profile if on Linux).
+Make sure that the location of terraform in your filesystem is added to your PATH (we recommend adding an entry to your .bashrc or .bash_profile if on Linux).
 
 Once setup is complete, the easy way to check that terraform is configured correctly is to enter "terraform -version" in your shell/command prompt which should return information about the downloaded version.
 
@@ -64,13 +64,19 @@ Once you have performed the above configuration steps, you can build infrastruct
    In addition to the above arguments, you must also supply a command such as plan or apply
 
 
-4. As an example, to see a plan of the dev network stack in us-east-1, our command would be:
+4. As an example, to see a **plan** of the dev network stack in us-east-1, our command would be:
 
    ```sh
    $ tools/aws/terraform/tf_deploy -r us-east-1 -t dev -s network plan
    ```
 
-5. To destroy resources that you have created as part of a specific stack, you should run:
+5. If the plan looks good, we can run **apply** to create the dev network stack infrastructure in us-east-1 using:
+
+   ```sh
+   $ tools/aws/terraform/tf_deploy -r us-east-1 -t dev -s network apply
+   ```
+
+5. Finally, to destroy resources that you have created as part of the dev network stack, you should run:
 
     ```sh
    $ tools/aws/terraform/tf_deploy -r us-east-1 -t dev -s network destroy -force

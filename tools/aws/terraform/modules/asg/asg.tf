@@ -2,10 +2,6 @@ variable "geo" {}
 
 variable "target" {}
 
-variable "azs" {
-  type = "list"
-}
-
 variable "launch_config" {}
 
 variable "asg_min" {}
@@ -14,17 +10,19 @@ variable "asg_max" {}
 
 variable "asg_desired" {}
 
+variable "identifier" {}
+
 variable "subnets" {
   type = "list"
 }
 
 variable "target_group" {
   type = "list"
+  default = [""]
 }
 
 resource "aws_autoscaling_group" "asg" {
-  availability_zones   = "${var.azs}"
-  name                 = "${var.target}-${var.geo}-slalom-hashicorp-asg"
+  name                 = "${var.target}-${var.geo}-${var.identifier}-slalom-hashicorp-asg"
   max_size             = "${var.asg_max}"
   min_size             = "${var.asg_min}"
   desired_capacity     = "${var.asg_desired}"
@@ -38,7 +36,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.target}-${var.geo}-slalom-hashicorp"
+    value               = "${var.target}-${var.geo}-${var.identifier}-slalom-hashicorp"
     propagate_at_launch = true
   }
 }

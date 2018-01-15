@@ -4,22 +4,24 @@ variable "geo" {}
 
 variable "target" {}
 
+variable "identifier" {}
+
 variable "policy_doc" {}
 
-resource "aws_iam_role_policy" "web_server_iam_role_policy" {
-  name = "${var.target}-${var.geo}-web-server-policy"
-  role = "${aws_iam_role.web_server_role.id}"
+resource "aws_iam_role_policy" "server_iam_role_policy" {
+  name = "${var.target}-${var.geo}-${var.identifier}-server-policy"
+  role = "${aws_iam_role.server_role.id}"
 
   policy = "${var.policy_doc}"
 }
 
-resource "aws_iam_instance_profile" "web_server_iam_profile" {
-  name  = "${var.target}-${var.geo}-web-server-profile"
-  role = "${aws_iam_role.web_server_role.id}"
+resource "aws_iam_instance_profile" "server_iam_profile" {
+  name  = "${var.target}-${var.geo}-${var.identifier}-server-profile"
+  role = "${aws_iam_role.server_role.id}"
 }
 
-resource "aws_iam_role" "web_server_role" {
-  name = "${var.target}-${var.geo}-web-server-role"
+resource "aws_iam_role" "server_role" {
+  name = "${var.target}-${var.geo}-${var.identifier}-server-role"
 
   assume_role_policy = <<EOF
 {
@@ -38,10 +40,10 @@ resource "aws_iam_role" "web_server_role" {
 EOF
 }
 
-output "web_server_iam_role" {
-  value = "${aws_iam_role.web_server_role.id}"
+output "server_iam_role" {
+  value = "${aws_iam_role.server_role.id}"
 }
 
-output "web_server_iam_instance_profile" {
-  value = "${aws_iam_instance_profile.web_server_iam_profile.id}"
+output "server_iam_instance_profile" {
+  value = "${aws_iam_instance_profile.server_iam_profile.id}"
 }

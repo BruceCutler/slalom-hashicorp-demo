@@ -12,6 +12,16 @@ variable "stack" {}
 
 variable "vpc_cidr_block" {}
 
+variable "s3_bucket" {}
+
+variable "bastion_instance_type" {}
+
+variable "bastion_asg_min" {}
+
+variable "bastion_asg_max" {}
+
+variable "bastion_asg_desired" {}
+
 variable "azs" {
   type = "list"
 }
@@ -29,14 +39,20 @@ provider "aws" {
 }
 
 module "network" {
-  source          = "../../modules/network"
-  region          = "${var.region}"
-  azs             = "${var.azs}"
-  target          = "${var.target}"
-  stack           = "${var.stack}"
-  cidr_block      = "${var.vpc_cidr_block}"
-  pub_sub_cidr    = "${var.pub_sub_cidr}"
-  priv_sub_cidr   = "${var.priv_sub_cidr}"
+  source                = "../../modules/network"
+  region                = "${var.region}"
+  geo                   = "${var.geo}"
+  azs                   = "${var.azs}"
+  target                = "${var.target}"
+  stack                 = "${var.stack}"
+  cidr_block            = "${var.vpc_cidr_block}"
+  pub_sub_cidr          = "${var.pub_sub_cidr}"
+  priv_sub_cidr         = "${var.priv_sub_cidr}"
+  bastion_instance_type = "${var.bastion_instance_type}"
+  bastion_asg_min       = "${var.bastion_asg_min}"
+  bastion_asg_max       = "${var.bastion_asg_max}"
+  bastion_asg_desired   = "${var.bastion_asg_desired}"
+  s3_bucket             = "${var.s3_bucket}"
 }
 
 output "vpc_id" {
